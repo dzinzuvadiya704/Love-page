@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Will You Be Mine?</title>
+
+<style>
+    /* ========== DESIGN KEPT AS-IS (only tiny layout tweaks to make things work) ========== */
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(135deg, #ff8fb1, #ffaccf, #ffd6e8);
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .container {
+        text-align: center;
+        color: #fff;
+        max-width: 90%;
+        position: relative; /* keep anchor for initial button layout */
+    }
+
+    h1 {
+        font-size: 2.4rem;
+        animation: fadeIn 1.5s ease;
+        text-shadow: 0 0 10px #ff4f93;
+        margin: 0;
+        padding: 8px 0;
+    }
+
+    .buttons {
+        margin-top: 30px;
+        position: relative;
+        height: 64px; /* small reserved area so buttons start in same place visually */
+    }
+
+    button {
+        padding: 14px 32px;
+        margin: 10px;
+        font-size: 1.2rem;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.25s ease;
+        user-select: none;
+        touch-action: manipulation;
+    }
+
+    #yesBtn {
+        background: #ff4f93;
+        color: white;
+        box-shadow: 0 0 15px #ff4f93;
+    }
+
+    /* keep the white look for NO but position will be handled in JS when moving */
+    #noBtn {
+        background: white;
+        color: #ff4f93;
+        position: absolute;
+        left: calc(50% + 120px); /* initial visual place */
+        top: 0;
+    }
+
+    #loveLetter {
+        display: none;
+        font-size: 1.2rem;
+        white-space: pre-line;
+        width: 90%;
+        margin: 0 auto;
+        color: #fff;
+        text-shadow: 0 0 5px #ff4f93;
+        max-width: 760px;
+        line-height: 1.6;
+        /* center it visually */
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        text-align: left;
+        padding: 24px;
+        box-sizing: border-box;
+    }
+
+    .gifBox img {
+        width: 260px;
+        margin-top: 20px;
+        border-radius: 15px;
+        box-shadow: 0 0 20px #ff4f93;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    @keyframes fadeIn {
+        from { opacity:0; transform: translateY(20px); }
+        to { opacity:1; transform: translateY(0); }
+    }
+
+    /* small responsive tweak so buttons don't overflow on small screens */
+    @media (max-width: 420px) {
+        .gifBox img { width: 200px; }
+        button { padding: 12px 22px; font-size: 1rem; }
+    }
+</style>
+</head>
+
+<body>
+
+<!-- Background romantic music -->
+<audio id="bgMusic" src="https://cdn.pixabay.com/download/audio/2024/02/07/audio_1f1373f68e.mp3?filename=romantic-melody-191475.mp3" loop preload="none"></audio>
+
+<!-- Click sound -->
+<audio id="clickSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_bac26fb395.mp3?filename=click-124467.mp3" preload="none"></audio>
+
+<div class="container" id="mainContent" aria-live="polite">
+    <h1 id="question">Tulip, Will you be mine? ❤️</h1>
+
+    <div class="gifBox" aria-hidden="true">
+        <img id="loveGIF" src="https://media.tenor.com/uI8Fs9kaI2QAAAAC/couple-love.gif" alt="cute couple gif" />
+    </div>
+
+    <div class="buttons" id="buttonsArea" aria-hidden="false">
+        <button id="yesBtn" aria-label="Yes button">Yes 💗</button>
+        <button id="noBtn" aria-label="No button">No 💔</button>
+    </div>
+</div>
+
+<div id="loveLetter" role="region" aria-label="Love letter"></div>
+
+<script>
+    // Grab elements
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const question = document.getElementById("question");
+    const bgMusic = document.getElementById("bgMusic");
+    const clickSound = document.getElementById("clickSound");
+    const loveLetter = document.getElementById("loveLetter");
+    const mainContent = document.getElementById("mainContent");
+    const buttonsArea = document.getElementById("buttonsArea");
+
+    // Messages for NO button clicks
+    const noTexts = [
+        "Are you sure Tulip? 🥺",
+        "Think again baby… 😘",
+        "Don't break Pookie's heart 💔",
+        "Last chance Tulip 😳",
+        "Please? 👉👈",
+        "I'm waiting… 💕"
+    ];
+    let index = 0;
+
+    // Try to enable music on first user gesture.
+    // Some browsers require the gesture to be on a specific element; body click is usually okay.
+    function tryPlay(elem) {
+        if (!elem) return;
+        const p = elem.play();
+        if (p && typeof p.then === 'function') {
+            p.catch(() => {
+                // ignore autoplay errors; music will remain off until another gesture
+            });
+        }
+    }
+
+    // play sounds safely (catch promise rejections)
+    function safePlaySound(elem) {
+        if (!elem) return;
+        tryPlay(elem);
+    }
+
+    // Use a single "first gesture" listener to enable audio. Will only run once.
+    function onFirstGesture() {
+        safePlaySound(bgMusic); // attempt to start background music after user's first tap/click
+        document.body.removeEventListener('pointerdown', onFirstGesture);
+    }
+    document.body.addEventListener('pointerdown', onFirstGesture, { once: true });
+
+    // utility: keep the NO button inside the viewport with a margin
+    function getSafePositionForButton(btnWidth, btnHeight) {
+        const margin = 12; // small margin from edges
+        // compute available area (viewport)
+        const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+        const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+
+        const maxLeft = Math.max(margin, vw - btnWidth - margin);
+        const maxTop  = Math.max(margin, vh - btnHeight - margin);
+
+        // random left/top between margin and the calculated max
+        const left = Math.floor(Math.random() * (maxLeft - margin + 1)) + margin;
+        const top  = Math.floor(Math.random() * (maxTop  - margin + 1)) + margin;
+
+        return { left, top };
+    }
+
+    // Move the NO button (works for mouse and touch). Use fixed positioning so it can roam freely.
+    function moveNoButtonRandomly() {
+        // ensure the button is fixed so coordinates are relative to viewport
+        noBtn.style.position = 'fixed';
+
+        const rect = noBtn.getBoundingClientRect();
+        const pos = getSafePositionForButton(rect.width, rect.height);
+
+        // set with a tiny offset so it visually moves smoothly
+        noBtn.style.left = `${pos.left}px`;
+        noBtn.style.top  = `${pos.top}px`;
+        // small subtle transform for a lively effect
+        noBtn.style.transform = `translate(-6px, -6px)`;
+        // revert transform after a short delay so it doesn't remain shifted too much
+        setTimeout(() => {
+            noBtn.style.transform = 'translate(0, 0)';
+        }, 220);
+    }
+
+    // For desktop: move when mouse gets near (mouseenter).
+    noBtn.addEventListener("mouseenter", (e) => {
+        // protect from accidental clicks on small screens where mouseenter fires weirdly
+        if (window.innerWidth <= 420) return;
+        moveNoButtonRandomly();
+        navigator.vibrate?.(80);
+    });
+
+    // For touch devices: move on touchstart to avoid user being able to tap easily
+    noBtn.addEventListener("touchstart", (e) => {
+        // prevent the touch from immediately being considered a "click" on the button.
+        e.preventDefault();
+        moveNoButtonRandomly();
+        navigator.vibrate?.(60);
+    }, { passive: false });
+
+    // If user actually manages to click NO, update the question text and play click sound
+    noBtn.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        navigator.vibrate?.(100);
+        safePlaySound(clickSound);
+
+        index = (index + 1) % noTexts.length;
+        question.textContent = noTexts[index];
+    });
+
+    // YES button behavior: hide main content and show the love letter with typing effect
+    yesBtn.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        navigator.vibrate?.([120, 80, 120]);
+        safePlaySound(clickSound);
+
+        // hide the main content (keeps layout visually identical)
+        mainContent.style.display = "none";
+
+        // The love letter message
+        const message =
+`My dearest Tulip ❤️
+
+From the moment I met you,
+something inside me just clicked…
+
+You make everything feel softer,
+brighter, and somehow more magical.
+
+I don't know what the future looks like,
+but I know one thing:
+
+Pookie's heart belongs to you.
+Only you.
+
+— Yours, always 💗`;
+
+        loveLetter.style.display = "block";
+        loveLetter.innerHTML = ""; // reset
+
+        // typing effect
+        let i = 0;
+        function typeLetter() {
+            // append char by char
+            if (i < message.length) {
+                // convert spaces/newline to visible characters correctly
+                loveLetter.innerHTML += message.charAt(i).replace(/\n/g, '<br>');
+                i++;
+                // randomized small delay to feel natural
+                const delay = 28 + Math.floor(Math.random() * 30);
+                setTimeout(typeLetter, delay);
+            } else {
+                // finished typing — give focus for screen readers
+                loveLetter.setAttribute('tabindex', '-1');
+                loveLetter.focus();
+            }
+        }
+        typeLetter();
+    });
+
+    // Accessibility: allow keyboard focus on NO button to move it if user tabs to it
+    noBtn.addEventListener('focus', () => {
+        // move it away if someone navigates by keyboard (funny but avoids accidental selection)
+        moveNoButtonRandomly();
+    });
+
+    // Ensure click sounds don't produce uncaught promise rejections
+    clickSound.addEventListener('play', () => {}, false);
+    bgMusic.addEventListener('play', () => {}, false);
+
+    // Small safety: if GIF fails to load, don't break the page
+    document.getElementById('loveGIF').addEventListener('error', () => {
+        // hide image if it errors
+        document.querySelector('.gifBox').style.display = 'none';
+    });
+
+    // OPTIONAL: if user wants music off by default, they can long-press the page before first gesture
+    // but we don't change initial design — music plays only after first user gesture now.
+</script>
+
+</body>
+</html>
