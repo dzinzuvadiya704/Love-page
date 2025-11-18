@@ -1,219 +1,187 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>For My Tulip 💖</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Great+Vibes&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Will You Be Mine?</title>
 
 <style>
     body {
         margin: 0;
         padding: 0;
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(135deg, #ff8fb1, #ffaccf, #ffd6e8);
         height: 100vh;
-        background: radial-gradient(circle at top, #ff9acb, #ff5f8f, #ff3166);
-        font-family: 'Poppins', sans-serif;
         overflow: hidden;
         display: flex;
-        flex-direction: column;
         justify-content: center;
         align-items: center;
-        color: white;
+    }
+
+    .container {
         text-align: center;
-        position: relative;
+        color: #fff;
+        max-width: 90%;
     }
 
     h1 {
-        font-size: 3rem;
-        font-family: 'Great Vibes', cursive;
-        text-shadow: 0 0 20px white;
-        animation: fadeIn 2s ease;
+        font-size: 2.4rem;
+        animation: fadeIn 1.5s ease;
+        text-shadow: 0 0 10px #ff4f93;
     }
 
-    .btn-box {
+    .buttons {
         margin-top: 30px;
-        position: relative;
     }
 
     button {
-        padding: 12px 35px;
-        font-size: 20px;
-        border-radius: 40px;
+        padding: 14px 32px;
+        margin: 10px;
+        font-size: 1.2rem;
         border: none;
+        border-radius: 50px;
         cursor: pointer;
-        transition: 0.3s;
         font-weight: 600;
+        transition: 0.3s ease;
     }
 
     #yesBtn {
-        background: #ffffff;
-        color: #ff2e63;
-        box-shadow: 0 0 20px rgba(255,255,255,0.8);
-    }
-
-    #yesBtn:hover {
-        transform: scale(1.15);
-        box-shadow: 0 0 25px white;
+        background: #ff4f93;
+        color: white;
+        box-shadow: 0 0 15px #ff4f93;
     }
 
     #noBtn {
+        background: white;
+        color: #ff4f93;
         position: absolute;
-        background: #ff2e63;
-        color: white;
-        box-shadow: 0 0 15px rgba(255,30,90,0.9);
     }
 
-    .heart {
-        position: absolute;
-        font-size: 18px;
-        color: rgba(255,255,255,0.85);
-        animation: floatUp 6s infinite ease-in-out;
+    #loveLetter {
+        display: none;
+        font-size: 1.2rem;
+        white-space: pre-line;
+        width: 90%;
+        margin: auto;
+        color: #fff;
+        text-shadow: 0 0 5px #ff4f93;
     }
 
-    @keyframes floatUp {
-        from { transform: translateY(0); opacity: 1; }
-        to { transform: translateY(-180px); opacity: 0; }
+    .gifBox img {
+        width: 230px;
+        margin-top: 20px;
+        border-radius: 15px;
+        box-shadow: 0 0 20px #ff4f93;
     }
 
     @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-
-    #letterScreen {
-        display: none;
-        flex-direction: column;
-        align-items: center;
-        padding: 20px;
-        font-size: 1.3rem;
-    }
-
-    #loveText {
-        width: 90%;
-        max-width: 450px;
-        white-space: pre-wrap;
-        border-left: 3px solid white;
-        padding-left: 12px;
-        text-align: left;
-        font-size: 1.4rem;
-        animation: fadeIn 1s ease;
-    }
-
-    .gif {
-        width: 250px;
-        border-radius: 20px;
-        box-shadow: 0 0 20px white;
-        margin-bottom: 20px;
+        from { opacity:0; transform: translateY(20px); }
+        to { opacity:1; transform: translateY(0); }
     }
 </style>
 </head>
 
-
 <body>
 
-<!-- Background Music -->
-<audio id="bgm" autoplay loop>
-    <source src="https://cdn.pixabay.com/download/audio/2021/09/30/audio_a4f2914c8e.mp3" type="audio/mpeg">
-</audio>
+<!-- Background romantic music -->
+<audio id="bgMusic" src="https://cdn.pixabay.com/download/audio/2024/02/07/audio_1f1373f68e.mp3?filename=romantic-melody-191475.mp3" loop></audio>
 
-<!-- Click Sound Effects -->
-<audio id="noSound">
-    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_bf0ef248b8.mp3" type="audio/mpeg">
-</audio>
+<!-- Click sound -->
+<audio id="clickSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_bac26fb395.mp3?filename=click-124467.mp3"></audio>
 
-<audio id="yesSound">
-    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_3c7ac8e6ef.mp3" type="audio/mpeg">
-</audio>
+<div class="container" id="mainContent">
+    <h1 id="question">Tulip, Will you be mine? ❤️</h1>
 
-<h1 id="mainTitle">Tulip… Will you be mine? 💖</h1>
+    <div class="gifBox">
+        <img id="loveGIF" src="https://media.tenor.com/y2Jt4FhSXV0AAAAC/couple-love.gif" />
+    </div>
 
-<div class="btn-box" id="buttons">
-    <button id="yesBtn" onclick="yesClicked()">Yes</button>
-    <button id="noBtn" onclick="moveNo()">No</button>
+    <div class="buttons">
+        <button id="yesBtn">Yes 💗</button>
+        <button id="noBtn">No 💔</button>
+    </div>
 </div>
 
-<div id="letterScreen">
-    <img class="gif" src="https://media.tenor.com/CYnrn0y03WgAAAAC/kiss-love.gif">
-    <div id="loveText"></div>
-</div>
+<div id="loveLetter"></div>
 
 <script>
-    const noLines = [
-        "Don't break my heart Tulip 😭",
-        "Are you really sure baby? 💔",
-        "Think once again… 🥺",
-        "Please Tulip… 😣",
-        "Just one Yes… 💕",
-        "Pretty please Tulip? 😭",
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const question = document.getElementById("question");
+    const bgMusic = document.getElementById("bgMusic");
+    const clickSound = document.getElementById("clickSound");
+    const loveLetter = document.getElementById("loveLetter");
+    const mainContent = document.getElementById("mainContent");
+
+    const noTexts = [
+        "Are you sure Tulip? 🥺",
+        "Think again baby… 😘",
+        "Don't break Pookie's heart 💔",
+        "Last chance Tulip 😳",
+        "Please? 👉👈",
+        "I'm waiting… 💕"
     ];
+    let index = 0;
 
-    function moveNo() {
-        const btn = document.getElementById("noBtn");
+    // Play music automatically after first interaction
+    document.body.addEventListener("click", () => {
+        bgMusic.play();
+    }, { once: true });
 
-        // Vibrate phone
-        if (navigator.vibrate) navigator.vibrate(150);
+    // NO button runs away
+    noBtn.addEventListener("click", (e) => {
+        navigator.vibrate?.(100);
+        clickSound.play();
 
-        // Play sound
-        document.getElementById("noSound").play();
+        index = (index + 1) % noTexts.length;
+        question.textContent = noTexts[index];
 
-        // Move btn
-        const x = Math.random() * (window.innerWidth - 150);
-        const y = Math.random() * (window.innerHeight - 150);
+        const x = Math.random() * (window.innerWidth - 100);
+        const y = Math.random() * (window.innerHeight - 100);
 
-        btn.style.left = x + "px";
-        btn.style.top = y + "px";
-        btn.innerText = noLines[Math.floor(Math.random() * noLines.length)];
-    }
+        noBtn.style.left = `${x}px`;
+        noBtn.style.top = `${y}px`;
+    });
 
-    function yesClicked() {
-        document.getElementById("buttons").style.display = "none";
-        document.getElementById("mainTitle").style.display = "none";
-        document.getElementById("letterScreen").style.display = "flex";
+    // YES button → love letter with typing effect
+    yesBtn.addEventListener("click", () => {
+        navigator.vibrate?.([80, 80, 80]);
+        clickSound.play();
 
-        // Vibrate + sound
-        if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-        document.getElementById("yesSound").play();
+        mainContent.style.display = "none";
 
-        // Hearts
-        for (let i = 0; i < 50; i++) {
-            let h = document.createElement("div");
-            h.classList.add("heart");
-            h.innerHTML = "❤️";
-            h.style.left = Math.random() * window.innerWidth + "px";
-            h.style.top = window.innerHeight + "px";
-            h.style.animationDuration = (4 + Math.random() * 3) + "s";
-            document.body.appendChild(h);
-        }
-
-        // Love Letter
-        const text = 
+        const message = 
 `My dearest Tulip ❤️
 
-From the moment you came into my life, everything became softer, sweeter, and warmer.
+From the moment I met you,
+something inside me just clicked…
 
-I don’t want perfect things. 
-I just want *you*.  
-Your smile… your voice… your presence…  
-Everything about you feels like home.
+You make everything feel softer,
+brighter, and somehow more magical.
 
-Thank you for being the most beautiful part of my world.
+I don't know what the future looks like,
+but I know one thing:
 
-Forever yours,  
-Pookie 🎀`;
+Pookie's heart belongs to you.
+Only you.
 
-        let index = 0;
-        const speed = 40;
-        const loveText = document.getElementById("loveText");
+— Yours, always 💗`;
+
+        loveLetter.style.display = "block";
+
+        let i = 0;
+        loveLetter.innerHTML = "";
 
         function typeLetter() {
-            if (index < text.length) {
-                loveText.innerHTML += text.charAt(index);
-                index++;
-                setTimeout(typeLetter, speed);
+            if (i < message.length) {
+                loveLetter.innerHTML += message.charAt(i);
+                i++;
+                setTimeout(typeLetter, 40);
             }
         }
+
         typeLetter();
-    }
+    });
 </script>
 
 </body>
