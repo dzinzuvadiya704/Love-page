@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>For My Tulip 💖</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Great+Vibes&display=swap" rel="stylesheet">
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        background: radial-gradient(circle at top, #ff9acb, #ff5f8f, #ff3166);
+        font-family: 'Poppins', sans-serif;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        text-align: center;
+        position: relative;
+    }
+
+    h1 {
+        font-size: 3rem;
+        font-family: 'Great Vibes', cursive;
+        text-shadow: 0 0 20px white;
+        animation: fadeIn 2s ease;
+    }
+
+    .btn-box {
+        margin-top: 30px;
+        position: relative;
+    }
+
+    button {
+        padding: 12px 35px;
+        font-size: 20px;
+        border-radius: 40px;
+        border: none;
+        cursor: pointer;
+        transition: 0.3s;
+        font-weight: 600;
+    }
+
+    #yesBtn {
+        background: #ffffff;
+        color: #ff2e63;
+        box-shadow: 0 0 20px rgba(255,255,255,0.8);
+    }
+
+    #yesBtn:hover {
+        transform: scale(1.15);
+        box-shadow: 0 0 25px white;
+    }
+
+    #noBtn {
+        position: absolute;
+        background: #ff2e63;
+        color: white;
+        box-shadow: 0 0 15px rgba(255,30,90,0.9);
+    }
+
+    .heart {
+        position: absolute;
+        font-size: 18px;
+        color: rgba(255,255,255,0.85);
+        animation: floatUp 6s infinite ease-in-out;
+    }
+
+    @keyframes floatUp {
+        from { transform: translateY(0); opacity: 1; }
+        to { transform: translateY(-180px); opacity: 0; }
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    #letterScreen {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+        font-size: 1.3rem;
+    }
+
+    #loveText {
+        width: 90%;
+        max-width: 450px;
+        white-space: pre-wrap;
+        border-left: 3px solid white;
+        padding-left: 12px;
+        text-align: left;
+        font-size: 1.4rem;
+        animation: fadeIn 1s ease;
+    }
+
+    .gif {
+        width: 250px;
+        border-radius: 20px;
+        box-shadow: 0 0 20px white;
+        margin-bottom: 20px;
+    }
+</style>
+</head>
+
+
+<body>
+
+<!-- Background Music -->
+<audio id="bgm" autoplay loop>
+    <source src="https://cdn.pixabay.com/download/audio/2021/09/30/audio_a4f2914c8e.mp3" type="audio/mpeg">
+</audio>
+
+<!-- Click Sound Effects -->
+<audio id="noSound">
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_bf0ef248b8.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="yesSound">
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_3c7ac8e6ef.mp3" type="audio/mpeg">
+</audio>
+
+<h1 id="mainTitle">Tulip… Will you be mine? 💖</h1>
+
+<div class="btn-box" id="buttons">
+    <button id="yesBtn" onclick="yesClicked()">Yes</button>
+    <button id="noBtn" onclick="moveNo()">No</button>
+</div>
+
+<div id="letterScreen">
+    <img class="gif" src="https://media.tenor.com/CYnrn0y03WgAAAAC/kiss-love.gif">
+    <div id="loveText"></div>
+</div>
+
+<script>
+    const noLines = [
+        "Don't break my heart Tulip 😭",
+        "Are you really sure baby? 💔",
+        "Think once again… 🥺",
+        "Please Tulip… 😣",
+        "Just one Yes… 💕",
+        "Pretty please Tulip? 😭",
+    ];
+
+    function moveNo() {
+        const btn = document.getElementById("noBtn");
+
+        // Vibrate phone
+        if (navigator.vibrate) navigator.vibrate(150);
+
+        // Play sound
+        document.getElementById("noSound").play();
+
+        // Move btn
+        const x = Math.random() * (window.innerWidth - 150);
+        const y = Math.random() * (window.innerHeight - 150);
+
+        btn.style.left = x + "px";
+        btn.style.top = y + "px";
+        btn.innerText = noLines[Math.floor(Math.random() * noLines.length)];
+    }
+
+    function yesClicked() {
+        document.getElementById("buttons").style.display = "none";
+        document.getElementById("mainTitle").style.display = "none";
+        document.getElementById("letterScreen").style.display = "flex";
+
+        // Vibrate + sound
+        if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+        document.getElementById("yesSound").play();
+
+        // Hearts
+        for (let i = 0; i < 50; i++) {
+            let h = document.createElement("div");
+            h.classList.add("heart");
+            h.innerHTML = "❤️";
+            h.style.left = Math.random() * window.innerWidth + "px";
+            h.style.top = window.innerHeight + "px";
+            h.style.animationDuration = (4 + Math.random() * 3) + "s";
+            document.body.appendChild(h);
+        }
+
+        // Love Letter
+        const text = 
+`My dearest Tulip ❤️
+
+From the moment you came into my life, everything became softer, sweeter, and warmer.
+
+I don’t want perfect things. 
+I just want *you*.  
+Your smile… your voice… your presence…  
+Everything about you feels like home.
+
+Thank you for being the most beautiful part of my world.
+
+Forever yours,  
+Pookie 🎀`;
+
+        let index = 0;
+        const speed = 40;
+        const loveText = document.getElementById("loveText");
+
+        function typeLetter() {
+            if (index < text.length) {
+                loveText.innerHTML += text.charAt(index);
+                index++;
+                setTimeout(typeLetter, speed);
+            }
+        }
+        typeLetter();
+    }
+</script>
+
+</body>
+</html>
