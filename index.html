@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Will You Be Mine?</title>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(135deg, #ff8fb1, #ffaccf, #ffd6e8);
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .container {
+        text-align: center;
+        color: #fff;
+        max-width: 90%;
+    }
+
+    h1 {
+        font-size: 2.4rem;
+        animation: fadeIn 1.5s ease;
+        text-shadow: 0 0 10px #ff4f93;
+    }
+
+    .buttons {
+        margin-top: 30px;
+    }
+
+    button {
+        padding: 14px 32px;
+        margin: 10px;
+        font-size: 1.2rem;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.3s ease;
+    }
+
+    #yesBtn {
+        background: #ff4f93;
+        color: white;
+        box-shadow: 0 0 15px #ff4f93;
+    }
+
+    #noBtn {
+        background: white;
+        color: #ff4f93;
+        position: absolute;
+    }
+
+    #loveLetter {
+        display: none;
+        font-size: 1.2rem;
+        white-space: pre-line;
+        width: 90%;
+        margin: auto;
+        color: #fff;
+        text-shadow: 0 0 5px #ff4f93;
+    }
+
+    .gifBox img {
+        width: 230px;
+        margin-top: 20px;
+        border-radius: 15px;
+        box-shadow: 0 0 20px #ff4f93;
+    }
+
+    @keyframes fadeIn {
+        from { opacity:0; transform: translateY(20px); }
+        to { opacity:1; transform: translateY(0); }
+    }
+</style>
+</head>
+
+<body>
+
+<!-- Background romantic music -->
+<audio id="bgMusic" src="https://cdn.pixabay.com/download/audio/2024/02/07/audio_1f1373f68e.mp3?filename=romantic-melody-191475.mp3" loop></audio>
+
+<!-- Click sound -->
+<audio id="clickSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_bac26fb395.mp3?filename=click-124467.mp3"></audio>
+
+<div class="container" id="mainContent">
+    <h1 id="question">Tulip, Will you be mine? ❤️</h1>
+
+    <div class="gifBox">
+        <img id="loveGIF" src="https://media.tenor.com/y2Jt4FhSXV0AAAAC/couple-love.gif" />
+    </div>
+
+    <div class="buttons">
+        <button id="yesBtn">Yes 💗</button>
+        <button id="noBtn">No 💔</button>
+    </div>
+</div>
+
+<div id="loveLetter"></div>
+
+<script>
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const question = document.getElementById("question");
+    const bgMusic = document.getElementById("bgMusic");
+    const clickSound = document.getElementById("clickSound");
+    const loveLetter = document.getElementById("loveLetter");
+    const mainContent = document.getElementById("mainContent");
+
+    const noTexts = [
+        "Are you sure Tulip? 🥺",
+        "Think again baby… 😘",
+        "Don't break Pookie's heart 💔",
+        "Last chance Tulip 😳",
+        "Please? 👉👈",
+        "I'm waiting… 💕"
+    ];
+    let index = 0;
+
+    // Play music automatically after first interaction
+    document.body.addEventListener("click", () => {
+        bgMusic.play();
+    }, { once: true });
+
+    // NO button runs away
+    noBtn.addEventListener("click", (e) => {
+        navigator.vibrate?.(100);
+        clickSound.play();
+
+        index = (index + 1) % noTexts.length;
+        question.textContent = noTexts[index];
+
+        const x = Math.random() * (window.innerWidth - 100);
+        const y = Math.random() * (window.innerHeight - 100);
+
+        noBtn.style.left = `${x}px`;
+        noBtn.style.top = `${y}px`;
+    });
+
+    // YES button → love letter with typing effect
+    yesBtn.addEventListener("click", () => {
+        navigator.vibrate?.([80, 80, 80]);
+        clickSound.play();
+
+        mainContent.style.display = "none";
+
+        const message = 
+`My dearest Tulip ❤️
+
+From the moment I met you,
+something inside me just clicked…
+
+You make everything feel softer,
+brighter, and somehow more magical.
+
+I don't know what the future looks like,
+but I know one thing:
+
+Pookie's heart belongs to you.
+Only you.
+
+— Yours, always 💗`;
+
+        loveLetter.style.display = "block";
+
+        let i = 0;
+        loveLetter.innerHTML = "";
+
+        function typeLetter() {
+            if (i < message.length) {
+                loveLetter.innerHTML += message.charAt(i);
+                i++;
+                setTimeout(typeLetter, 40);
+            }
+        }
+
+        typeLetter();
+    });
+</script>
+
+</body>
+</html>
